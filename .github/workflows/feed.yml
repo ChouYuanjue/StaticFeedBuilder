@@ -49,8 +49,23 @@ jobs:
           python -m feed_builder.cli digest --push
           python -m feed_builder.cli export-site --days 90 --limit 100
 
+      - name: Check Pages settings
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          code=$(curl -sS -o /tmp/pages.json -w "%{http_code}" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/pages")
+          if [ "$code" = "404" ]; then
+            echo "::error::GitHub Pages is not enabled yet. Open Settings -> Pages -> Build and deployment -> Source -> GitHub Actions, then rerun this workflow."
+            exit 1
+          fi
+          cat /tmp/pages.json
+
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
