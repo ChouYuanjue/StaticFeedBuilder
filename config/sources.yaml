@@ -1,0 +1,118 @@
+# Data sources. Add or remove freely.
+# strategy:
+#   ctftime_api: structured official API
+#   generic_html: fetch listing pages and discover competition-like links
+
+sources:
+  - name: CTFtime Upcoming
+    enabled: true
+    strategy: ctftime_api
+    url: https://ctftime.org/api/v1/events/?limit=80
+    tags: [ctf, security]
+    authority_hint: 78
+    info_gap_hint: 65
+
+  - name: Kaggle Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.kaggle.com/competitions
+    tags: [ai, data_science, modeling]
+    authority_hint: 82
+    info_gap_hint: 35
+
+  - name: ML Contests
+    enabled: true
+    strategy: generic_html
+    url: https://mlcontests.com/
+    tags: [ai, data_science, aggregator]
+    authority_hint: 65
+    info_gap_hint: 70
+
+  - name: Codabench Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.codabench.org/competitions/
+    tags: [ai, benchmark, workshop]
+    authority_hint: 78
+    info_gap_hint: 78
+
+  - name: EvalAI Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://eval.ai/web/challenges/challenge-page
+    tags: [ai, benchmark]
+    authority_hint: 76
+    info_gap_hint: 74
+
+  - name: Devpost AI Hackathons
+    enabled: true
+    strategy: generic_html
+    url: https://devpost.com/hackathons?search=ai&status[]=upcoming&status[]=open
+    tags: [hackathon, ai, product]
+    authority_hint: 62
+    info_gap_hint: 55
+
+  - name: DrivenData Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.drivendata.org/competitions/
+    tags: [ai, data_science, social_impact]
+    authority_hint: 74
+    info_gap_hint: 64
+
+  - name: AIcrowd Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://www.aicrowd.com/challenges
+    tags: [ai, rl, agents]
+    authority_hint: 72
+    info_gap_hint: 63
+
+  - name: Zindi Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://zindi.africa/competitions
+    tags: [ai, data_science]
+    authority_hint: 68
+    info_gap_hint: 60
+
+  - name: NeurIPS Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://neurips.cc/Conferences/2026/CallForCompetitions
+    tags: [ai, llm, agents, ai4science, conference]
+    authority_hint: 96
+    info_gap_hint: 84
+
+  - name: CVPR Workshops
+    enabled: true
+    strategy: generic_html
+    url: https://cvpr.thecvf.com/Conferences/2026/Workshops
+    tags: [cv, multimodal, workshop, conference]
+    authority_hint: 94
+    info_gap_hint: 86
+
+  - name: SemEval Tasks
+    enabled: true
+    strategy: generic_html
+    url: https://semeval.github.io/
+    tags: [nlp, shared_task]
+    authority_hint: 88
+    info_gap_hint: 82
+
+  - name: TREC Tracks
+    enabled: true
+    strategy: generic_html
+    url: https://trec.nist.gov/
+    tags: [ir, search, rag, shared_task]
+    authority_hint: 92
+    info_gap_hint: 83
+
+  - name: BioASQ Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://www.bioasq.org/
+    tags: [biomedical, qa, nlp, shared_task]
+    authority_hint: 84
+    info_gap_hint: 78
+

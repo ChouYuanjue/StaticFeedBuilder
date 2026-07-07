@@ -1,0 +1,37 @@
+weights:
+  authority: 0.20
+  feasibility: 0.18
+  low_cost: 0.15
+  ai_friendliness: 0.15
+  info_gap: 0.12
+  time_window: 0.10
+  portfolio_value: 0.10
+
+hard_filters:
+  reject_onsite_only: true
+  reject_school_required: true
+  reject_high_fee: true
+  reject_ai_forbidden: false  # false means downgrade, not reject; set true if you want stricter behavior
+  reject_closed_live_coding: true
+
+preferences:
+  preferred_tags:
+    - llm
+    - agents
+    - ai4science
+    - cv
+    - multimodal
+    - nlp
+    - ir
+    - data_science
+    - ctf
+    - modeling
+  disliked_tags:
+    - onsite
+    - school_required
+    - proctored
+    - expensive
+  min_score_to_push: 55
+  max_items_per_digest: 12
+  digest_days_ahead: 45
+

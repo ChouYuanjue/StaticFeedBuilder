@@ -1,0 +1,9 @@
+sources:
+  - name: CTFtime Upcoming
+    enabled: true
+    strategy: ctftime_api
+    url: https://ctftime.org/api/v1/events/?limit=5
+    tags: [ctf, security]
+    authority_hint: 78
+    info_gap_hint: 65
+

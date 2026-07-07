@@ -1,0 +1,13 @@
+[project]
+name = "static-feed-builder"
+version = "0.1.0"
+description = "Low-cost high-value AI/CS/modeling/CTF competition opportunity radar agent."
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
