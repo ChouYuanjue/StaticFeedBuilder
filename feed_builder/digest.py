@@ -3,7 +3,6 @@ from __future__ import annotations
 import html
 import json
 from datetime import datetime
-from pathlib import Path
 
 from .models import Competition
 
@@ -18,21 +17,43 @@ def risk_line(c: Competition) -> str:
     return "；".join(c.risk_flags[:3])
 
 
+def tags_text(c: Competition, max_items: int = 6) -> str:
+    return "，".join(c.tags[:max_items]) if c.tags else "未分类"
+
+
+def zh_summary(c: Competition) -> str:
+    """Return a mobile-friendly Chinese summary without extra LLM calls."""
+    desc = (c.description or "").strip()
+    if desc:
+        return desc[:260]
+
+    tag_blob = tags_text(c, 4)
+    source = c.source or "公开来源"
+    mode = c.mode or "unknown"
+    lower_blob = f"{source} {tag_blob}".lower()
+    if "ctf" in lower_blob:
+        return f"这是来自 {source} 的线上安全/CTF 赛事线索，适合希望远程刷题、练习安全题型的小队或个人；请进入链接确认赛制、时区、报名方式和题目范围。"
+    if any(t in lower_blob for t in ["nlp", "shared", "qa", "ir", "retrieval"]):
+        return f"这是来自 {source} 的 NLP/检索/问答类 shared task 或 benchmark 线索，适合用现成模型、LLM 或检索增强方法做远程提交；请查看规则确认数据、提交格式和截止时间。"
+    if any(t in lower_blob for t in ["cv", "multimodal", "medical", "vision"]):
+        return f"这是来自 {source} 的视觉/多模态/医学 AI 相关挑战线索，可能关联 workshop、benchmark 或线上评测；请查看链接确认是否仍开放报名和提交。"
+    return f"这是来自 {source} 的 {tag_blob} 相关线上机会，当前模式标记为 {mode}；建议打开比赛链接核对报名/提交截止、团队限制、费用和外部工具政策。"
+
+
 def make_card(c: Competition, index: int | None = None) -> str:
     prefix = f"{index}. " if index is not None else ""
-    tags = ", ".join(c.tags[:6]) if c.tags else "未分类"
     evidence = ""
     if c.evidence:
         evidence = "\n证据：" + " / ".join(e[:120] for e in c.evidence[:2])
     return (
         f"{prefix}【{c.final_score:.1f}/100】{c.title}\n"
-        f"领域：{tags}\n"
+        f"中文简介：{zh_summary(c)}\n"
+        f"领域：{tags_text(c)}\n"
         f"来源：{c.source}\n"
-        f"模式：{c.mode}｜学校/机构：{c.school_required}｜AI政策：{c.ai_policy}｜费用：{c.fee}\n"
         f"截止：{fmt_date(c.deadline())}\n"
+        f"模式：{c.mode}｜学校/机构：{c.school_required}｜AI政策：{c.ai_policy}｜费用：{c.fee}\n"
         f"风险：{risk_line(c)}\n"
-        f"建议：先看 rules/baseline，确认是否远程、是否需要学校名义、是否允许外部工具。\n"
-        f"链接：{c.url}"
+        f"比赛链接：{c.url}"
         f"{evidence}"
     )
 
@@ -40,9 +61,9 @@ def make_card(c: Competition, index: int | None = None) -> str:
 def make_digest(comps: list[Competition], title: str = "Static Feed Builder Daily Digest") -> str:
     today = datetime.now().strftime("%Y-%m-%d")
     if not comps:
-        return f"# {title} - {today}\n\n今日没有达到阈值的推荐。"
+        return f"# {title} - {today}\n\n今日没有达到阈值的推荐。\n"
     parts = [f"# {title} - {today}", ""]
-    parts.append(f"共筛出 {len(comps)} 个候选，按推荐分排序。")
+    parts.append(f"共筛出 {len(comps)} 个候选；已做来源多样化，避免单一平台刷屏。")
     parts.append("")
     for i, c in enumerate(comps, 1):
         parts.append(make_card(c, i))
@@ -53,7 +74,9 @@ def make_digest(comps: list[Competition], title: str = "Static Feed Builder Dail
 def competition_to_digest_item(c: Competition) -> dict:
     return {
         "title": c.title,
+        "summary_zh": zh_summary(c),
         "url": c.url,
+        "competition_link": c.url,
         "source": c.source,
         "tags": c.tags,
         "score": c.final_score,
@@ -61,17 +84,13 @@ def competition_to_digest_item(c: Competition) -> dict:
         "deadline": fmt_date(c.deadline()),
         "ai_policy": c.ai_policy,
         "school_required": c.school_required,
+        "fee": c.fee,
         "risk_flags": c.risk_flags,
     }
 
 
 def make_ics(comps: list[Competition]) -> str:
-    lines = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//Static Feed Builder//CN",
-        "CALSCALE:GREGORIAN",
-    ]
+    lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Static Feed Builder//CN", "CALSCALE:GREGORIAN"]
     for c in comps:
         dl = c.deadline()
         if not dl:
@@ -79,7 +98,13 @@ def make_ics(comps: list[Competition]) -> str:
         day = dl.strftime("%Y%m%d")
         uid = f"{abs(hash(c.normalized_key()))}@static-feed-builder"
         summary = _ics_escape(f"DDL: {c.title[:80]}")
-        desc = _ics_escape(f"Score: {c.final_score}\nSource: {c.source}\nURL: {c.url}\nRisk: {risk_line(c)}")
+        desc = _ics_escape(
+            f"中文简介: {zh_summary(c)}\n"
+            f"Score: {c.final_score}\n"
+            f"Source: {c.source}\n"
+            f"Link: {c.url}\n"
+            f"Risk: {risk_line(c)}"
+        )
         lines.extend([
             "BEGIN:VEVENT",
             f"UID:{uid}",
@@ -104,15 +129,16 @@ def make_rss(comps: list[Competition], base_url: str = "", title: str = "Static 
     for c in comps:
         pub = (c.updated_at or c.discovered_at or datetime.utcnow()).strftime("%a, %d %b %Y %H:%M:%S +0000")
         desc = html.escape(
-            f"领域：{', '.join(c.tags[:6]) if c.tags else '未分类'}\n"
+            f"中文简介：{zh_summary(c)}\n"
+            f"领域：{tags_text(c)}\n"
             f"来源：{c.source}\n"
-            f"分数：{c.final_score}\n"
+            f"分数：{c.final_score:.1f}\n"
             f"截止：{fmt_date(c.deadline())}\n"
             f"模式：{c.mode}\n"
             f"学校/机构：{c.school_required}\n"
             f"AI政策：{c.ai_policy}\n"
             f"风险：{risk_line(c)}\n"
-            f"链接：{c.url}"
+            f"比赛链接：{c.url}"
         )
         guid = html.escape(c.normalized_key())
         items.append(
@@ -130,7 +156,7 @@ def make_rss(comps: list[Competition], base_url: str = "", title: str = "Static 
         "<channel>\n"
         f"  <title>{html.escape(title)}</title>\n"
         f"  <link>{html.escape(channel_link)}</link>\n"
-        "  <description>AI/CS/modeling/CTF low-cost competition opportunities</description>\n"
+        "  <description>Public source digest with RSS, calendar and mobile-friendly summaries</description>\n"
         f"  <lastBuildDate>{now}</lastBuildDate>\n"
         + "\n".join(items)
         + "\n</channel>\n</rss>\n"
@@ -149,8 +175,10 @@ def make_static_site(comps: list[Competition], base_url: str = "") -> str:
         <article class="card">
           <h2><a href="{html.escape(c.url)}" target="_blank" rel="noreferrer">{html.escape(c.title)}</a></h2>
           <div class="score">{c.final_score:.1f}/100</div>
-          <p class="meta">来源：{html.escape(c.source)}｜截止：{fmt_date(c.deadline())}｜模式：{html.escape(c.mode)}｜AI：{html.escape(c.ai_policy)}</p>
+          <p class="summary"><strong>中文简介：</strong>{html.escape(zh_summary(c))}</p>
+          <p class="meta">来源：{html.escape(c.source)}｜截止：{fmt_date(c.deadline())}｜模式：{html.escape(c.mode)}｜AI：{html.escape(c.ai_policy)}｜费用：{html.escape(c.fee)}</p>
           <p class="risk">风险：{html.escape(risk_line(c))}</p>
+          <p class="link"><a href="{html.escape(c.url)}" target="_blank" rel="noreferrer">打开比赛链接</a></p>
           <div class="tags">{tag_html}</div>
           {evidence}
         </article>
@@ -173,14 +201,16 @@ def make_static_site(comps: list[Competition], base_url: str = "") -> str:
     .card {{ position: relative; background: white; border-radius: 16px; padding: 18px; margin: 16px 0; box-shadow: 0 4px 18px rgba(0,0,0,.06); }}
     .card h2 {{ margin: 0 80px 8px 0; font-size: 20px; }}
     .score {{ position: absolute; right: 18px; top: 18px; font-weight: 700; color: #0f766e; }}
+    .summary {{ line-height: 1.65; }}
     .meta, .risk, .evidence {{ color: #4b5563; line-height: 1.55; }}
+    .link {{ margin: 10px 0; font-weight: 600; }}
     .tags span {{ display: inline-block; background: #e5e7eb; padding: 4px 8px; border-radius: 999px; margin: 3px; font-size: 12px; }}
   </style>
 </head>
 <body>
   <header>
     <h1>Static Feed Builder</h1>
-    <p>自动收集 AI / CS / 建模 / CTF / Workshop Challenge 的低成本机会。</p>
+    <p>自动生成公开机会订阅源、日历和移动端摘要。</p>
     <p>更新时间：{html.escape(now)}｜共 {len(comps)} 条</p>
     <p class="links">{rss} {ics} {json_link}</p>
   </header>
@@ -193,5 +223,4 @@ def make_static_site(comps: list[Competition], base_url: str = "") -> str:
 
 
 def make_items_json(comps: list[Competition]) -> str:
-    return json.dumps([competition_to_digest_item(c) | {"url": c.url, "source": c.source} for c in comps], ensure_ascii=False, indent=2, default=str)
-
+    return json.dumps([competition_to_digest_item(c) for c in comps], ensure_ascii=False, indent=2, default=str)

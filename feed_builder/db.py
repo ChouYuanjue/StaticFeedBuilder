@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 from datetime import datetime
 from pathlib import Path
@@ -212,6 +213,104 @@ def row_to_competition(row: sqlite3.Row) -> Competition:
     )
 
 
+def _is_ctf(c: Competition) -> bool:
+    blob = " ".join([c.source or "", c.title or "", *c.tags]).lower()
+    return "ctf" in blob or "ctftime" in blob
+
+
+def _is_output_noise(c: Competition) -> bool:
+    """Filter obvious navigation/history/category pages at the final output layer.
+
+    This is deliberately conservative and cheap. It protects RSS/site/calendar
+    from stale LLM cache entries and generic HTML crawler mistakes.
+    """
+    title = " ".join((c.title or "").strip().split()).lower()
+    url = (c.url or "").lower()
+    source = (c.source or "").lower()
+
+    if not title or len(title) <= 2:
+        return True
+    if title.startswith("skip to"):
+        return True
+    if title.startswith("#") or "?categories=" in url:
+        return True
+    if title in {"program", "venue", "schedule", "speakers", "organizers", "committee", "sponsors"}:
+        return True
+    if any(x in title for x in ["reviewing guidelines", "reviewer guidelines", "author guidelines"]):
+        return True
+    if "call for workshops" in title or "call for papers" in title:
+        return True
+    if "accepted competitions" in title or title == "competition track":
+        return True
+    if any(x in title for x in ["completed", "closed", "final-evaluations", "private leaderboard"]):
+        return True
+    if re.search(r"\b20(1[0-9]|2[0-5])\b", title) and not c.deadline():
+        return True
+    if "/conferences/20" in url and any(x in url for x in ["competitiontrack", "callforcompetitions"]):
+        return True
+    if re.search(r"/workshop\d+/(program|venue|schedule|speakers)", url):
+        return True
+    return False
+
+
+def _diversify_recommendations(comps: list[Competition], limit: int) -> list[Competition]:
+    """Keep recommendations useful instead of letting one structured source dominate.
+
+    CTFtime is reliable and often produces many items, but the feed is intended to
+    surface mixed AI/CS/modeling/challenge opportunities. Therefore CTF items are
+    capped to roughly 25% when non-CTF items exist.
+    """
+    if not comps:
+        return []
+    non_ctf = [c for c in comps if not _is_ctf(c)]
+    ctf = [c for c in comps if _is_ctf(c)]
+    if not non_ctf:
+        return comps[:limit]
+
+    max_ctf = max(2, min(5, limit // 4))
+    selected: list[Competition] = []
+    selected_keys: set[str] = set()
+
+    # First pass: prefer non-CTF and avoid one source flooding the page.
+    per_source_count: dict[str, int] = {}
+    max_per_source = max(3, limit // 3)
+    for c in non_ctf:
+        if len(selected) >= limit - max_ctf:
+            break
+        if per_source_count.get(c.source, 0) >= max_per_source:
+            continue
+        selected.append(c)
+        selected_keys.add(c.normalized_key())
+        per_source_count[c.source] = per_source_count.get(c.source, 0) + 1
+
+    # Fill remaining non-CTF if the per-source cap was too strict.
+    for c in non_ctf:
+        if len(selected) >= limit - max_ctf:
+            break
+        k = c.normalized_key()
+        if k not in selected_keys:
+            selected.append(c)
+            selected_keys.add(k)
+
+    # Add a small CTF slice.
+    for c in ctf[:max_ctf]:
+        if len(selected) >= limit:
+            break
+        selected.append(c)
+        selected_keys.add(c.normalized_key())
+
+    # If still under limit, fill with best leftovers.
+    for c in comps:
+        if len(selected) >= limit:
+            break
+        k = c.normalized_key()
+        if k not in selected_keys:
+            selected.append(c)
+            selected_keys.add(k)
+
+    return selected[:limit]
+
+
 def list_recommendations(settings: Settings, days_ahead: int, min_score: float, limit: int) -> list[Competition]:
     now = datetime.utcnow()
     max_dt = now.timestamp() + days_ahead * 24 * 3600
@@ -223,18 +322,18 @@ def list_recommendations(settings: Settings, days_ahead: int, min_score: float, 
             ORDER BY final_score DESC, updated_at DESC
             LIMIT ?
             """,
-            (min_score, max(limit * 4, limit)),
+            (min_score, max(limit * 10, limit + 80)),
         ).fetchall()
     comps = []
     for row in rows:
         c = row_to_competition(row)
+        if _is_output_noise(c):
+            continue
         dl = c.deadline()
         # Expired opportunities should not appear in RSS/site/calendar by default.
         if dl is not None and dl.timestamp() < now.timestamp():
             continue
         if dl is None or dl.timestamp() <= max_dt:
             comps.append(c)
-        if len(comps) >= limit:
-            break
-    return comps
+    return _diversify_recommendations(comps, limit)
 
