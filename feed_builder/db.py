@@ -229,6 +229,9 @@ def list_recommendations(settings: Settings, days_ahead: int, min_score: float, 
     for row in rows:
         c = row_to_competition(row)
         dl = c.deadline()
+        # Expired opportunities should not appear in RSS/site/calendar by default.
+        if dl is not None and dl.timestamp() < now.timestamp():
+            continue
         if dl is None or dl.timestamp() <= max_dt:
             comps.append(c)
         if len(comps) >= limit:

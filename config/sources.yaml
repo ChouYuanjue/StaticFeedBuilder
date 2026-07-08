@@ -1,7 +1,4 @@
-# Data sources. Add or remove freely.
-# strategy:
-#   ctftime_api: structured official API
-#   generic_html: fetch listing pages and discover competition-like links
+# Public sources. The model gate is used for generic HTML sources.
 
 sources:
   - name: CTFtime Upcoming
@@ -12,70 +9,6 @@ sources:
     authority_hint: 78
     info_gap_hint: 65
 
-  - name: Kaggle Competitions
-    enabled: true
-    strategy: generic_html
-    url: https://www.kaggle.com/competitions
-    tags: [ai, data_science, modeling]
-    authority_hint: 82
-    info_gap_hint: 35
-
-  - name: ML Contests
-    enabled: true
-    strategy: generic_html
-    url: https://mlcontests.com/
-    tags: [ai, data_science, aggregator]
-    authority_hint: 65
-    info_gap_hint: 70
-
-  - name: Codabench Competitions
-    enabled: true
-    strategy: generic_html
-    url: https://www.codabench.org/competitions/
-    tags: [ai, benchmark, workshop]
-    authority_hint: 78
-    info_gap_hint: 78
-
-  - name: EvalAI Challenges
-    enabled: true
-    strategy: generic_html
-    url: https://eval.ai/web/challenges/challenge-page
-    tags: [ai, benchmark]
-    authority_hint: 76
-    info_gap_hint: 74
-
-  - name: Devpost AI Hackathons
-    enabled: true
-    strategy: generic_html
-    url: https://devpost.com/hackathons?search=ai&status[]=upcoming&status[]=open
-    tags: [hackathon, ai, product]
-    authority_hint: 62
-    info_gap_hint: 55
-
-  - name: DrivenData Competitions
-    enabled: true
-    strategy: generic_html
-    url: https://www.drivendata.org/competitions/
-    tags: [ai, data_science, social_impact]
-    authority_hint: 74
-    info_gap_hint: 64
-
-  - name: AIcrowd Challenges
-    enabled: true
-    strategy: generic_html
-    url: https://www.aicrowd.com/challenges
-    tags: [ai, rl, agents]
-    authority_hint: 72
-    info_gap_hint: 63
-
-  - name: Zindi Competitions
-    enabled: true
-    strategy: generic_html
-    url: https://zindi.africa/competitions
-    tags: [ai, data_science]
-    authority_hint: 68
-    info_gap_hint: 60
-
   - name: NeurIPS Competitions
     enabled: true
     strategy: generic_html
@@ -83,6 +16,7 @@ sources:
     tags: [ai, llm, agents, ai4science, conference]
     authority_hint: 96
     info_gap_hint: 84
+    llm_max_candidates: 8
 
   - name: CVPR Workshops
     enabled: true
@@ -91,6 +25,7 @@ sources:
     tags: [cv, multimodal, workshop, conference]
     authority_hint: 94
     info_gap_hint: 86
+    llm_max_candidates: 14
 
   - name: SemEval Tasks
     enabled: true
@@ -99,6 +34,7 @@ sources:
     tags: [nlp, shared_task]
     authority_hint: 88
     info_gap_hint: 82
+    llm_max_candidates: 12
 
   - name: TREC Tracks
     enabled: true
@@ -107,6 +43,7 @@ sources:
     tags: [ir, search, rag, shared_task]
     authority_hint: 92
     info_gap_hint: 83
+    llm_max_candidates: 10
 
   - name: BioASQ Challenges
     enabled: true
@@ -115,4 +52,76 @@ sources:
     tags: [biomedical, qa, nlp, shared_task]
     authority_hint: 84
     info_gap_hint: 78
+    llm_max_candidates: 10
 
+  - name: Codabench Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.codabench.org/competitions/
+    tags: [ai, benchmark, workshop]
+    authority_hint: 78
+    info_gap_hint: 78
+    llm_max_candidates: 12
+
+  - name: EvalAI Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://eval.ai/web/challenges/challenge-page
+    tags: [ai, benchmark]
+    authority_hint: 76
+    info_gap_hint: 74
+    llm_max_candidates: 10
+
+  - name: ML Contests
+    enabled: true
+    strategy: generic_html
+    url: https://mlcontests.com/
+    tags: [ai, data_science, aggregator]
+    authority_hint: 65
+    info_gap_hint: 70
+    llm_max_candidates: 12
+
+  - name: Kaggle Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.kaggle.com/competitions
+    tags: [ai, data_science, modeling]
+    authority_hint: 82
+    info_gap_hint: 35
+    llm_max_candidates: 8
+
+  - name: DrivenData Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.drivendata.org/competitions/
+    tags: [ai, data_science, social_impact]
+    authority_hint: 74
+    info_gap_hint: 64
+    llm_max_candidates: 8
+
+  - name: AIcrowd Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://www.aicrowd.com/challenges
+    tags: [ai, rl, agents]
+    authority_hint: 72
+    info_gap_hint: 63
+    llm_max_candidates: 8
+
+  - name: Zindi Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://zindi.africa/competitions
+    tags: [ai, data_science]
+    authority_hint: 68
+    info_gap_hint: 60
+    llm_max_candidates: 8
+
+  - name: Devpost AI Hackathons
+    enabled: true
+    strategy: generic_html
+    url: https://devpost.com/hackathons?search=ai&status[]=upcoming&status[]=open
+    tags: [hackathon, ai, product]
+    authority_hint: 62
+    info_gap_hint: 55
+    llm_max_candidates: 8

@@ -7,3 +7,5 @@ out/
 logs/
 .pytest_cache/
 .ruff_cache/
+
+data/llm_cache.json

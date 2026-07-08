@@ -35,6 +35,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Restore extraction cache
+        uses: actions/cache@v4
+        with:
+          path: data/llm_cache.json
+          key: extraction-cache-${{ github.run_id }}
+          restore-keys: |
+            extraction-cache-
+
       - name: Crawl and export
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
@@ -45,7 +53,7 @@ jobs:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
           python -m feed_builder.cli init-db
-          python -m feed_builder.cli crawl
+          python -m feed_builder.cli crawl --llm-clean
           python -m feed_builder.cli digest --push
           python -m feed_builder.cli export-site --days 90 --limit 100
 

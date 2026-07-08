@@ -38,6 +38,9 @@ def crawl_ctftime(source: dict, user_agent: str) -> list[Competition]:
         restrictions = (ev.get("restrictions") or "").lower()
         fmt = (ev.get("format") or "").lower()
         title = ev.get("title") or "Untitled CTF"
+        low_title = title.lower()
+        if any(word in low_title for word in ["cancelled", "canceled", "postponed", "completed"]):
+            continue
         ctftime_url = ev.get("ctftime_url") or ev.get("url") or url
         tags = list(source.get("tags", []))
         if "jeopardy" in fmt:

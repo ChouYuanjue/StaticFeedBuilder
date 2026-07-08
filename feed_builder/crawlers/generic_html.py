@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+from datetime import datetime
 from urllib.parse import urljoin, urlparse
 
 import httpx
@@ -13,14 +15,39 @@ KEYWORDS = [
     "leaderboard", "call for competitions", "workshop", "ctf", "赛", "比赛", "挑战", "评测"
 ]
 NEGATIVE = ["privacy", "terms", "login", "sign in", "contact", "sponsor", "jobs", "career"]
+BAD_ANCHOR_TEXTS = {
+    "skip to main content", "skip to yearly menu bar", "main content", "yearly menu bar",
+    "program", "venue", "sponsors", "organizers", "committee", "reviewing guidelines",
+    "reviewer guidelines", "accepted competitions", "call for workshops", "workshops",
+}
+BAD_TITLE_PREFIXES = ("#", "phase ", "round ", "final-evaluations", ": completed")
+CURRENT_YEAR = datetime.utcnow().year
 
 
 def _looks_like_candidate(text: str, href: str) -> bool:
-    blob = f"{text} {href}".lower()
-    if len(text.strip()) < 3:
+    clean = " ".join((text or "").split()).strip()
+    low_text = clean.lower()
+    blob = f"{clean} {href}".lower()
+    parsed = urlparse(href)
+
+    if len(clean) < 3:
+        return False
+    if parsed.fragment and not parsed.path.rstrip("/").lower().endswith(("challenge", "competitions", "workshops")):
+        return False
+    if low_text in BAD_ANCHOR_TEXTS:
+        return False
+    if low_text.startswith(BAD_TITLE_PREFIXES):
         return False
     if any(n in blob for n in NEGATIVE):
         return False
+    if "completed" in blob or "archived" in blob or "closed" in blob:
+        return False
+
+    # Avoid old conference/archive pages unless the source intentionally points to the current year.
+    years = [int(y) for y in re.findall(r"20\d{2}", blob)]
+    if years and max(years) < CURRENT_YEAR:
+        return False
+
     return any(k in blob for k in KEYWORDS)
 
 
@@ -40,8 +67,8 @@ def _fetch_text(client: httpx.Client, url: str) -> tuple[str, str]:
     soup = BeautifulSoup(html, "html.parser")
     for bad in soup(["script", "style", "nav", "footer", "header"]):
         bad.decompose()
-    title = compact_text(soup.get_text(" ", strip=True), 300)
-    text = compact_text(soup.get_text(" ", strip=True), 16000)
+    title = compact_text(soup.title.get_text(" ", strip=True) if soup.title else soup.get_text(" ", strip=True), 300)
+    text = compact_text(soup.get_text(" ", strip=True), 20000)
     return title, text
 
 
@@ -65,7 +92,7 @@ def crawl_generic_html(source: dict, user_agent: str, fetch_details: bool = True
                 url=url,
                 source=source["name"],
                 tags=source.get("tags", []),
-                description=page_text[:600],
+                description=page_text[:14000],
                 mode=inferred["mode"],
                 school_required=inferred["school_required"],
                 ai_policy=inferred["ai_policy"],
@@ -74,7 +101,7 @@ def crawl_generic_html(source: dict, user_agent: str, fetch_details: bool = True
                 authority_score=float(source.get("authority_hint", 60)),
                 info_gap_score=float(source.get("info_gap_hint", 55)),
                 evidence=inferred.get("evidence", []),
-                raw={"source_url": url, "kind": "page"},
+                raw={"source_url": url, "kind": "page", "candidate_text": page_text[:14000]},
             )
             dates = inferred.get("dates", [])
             if dates:
@@ -107,7 +134,7 @@ def crawl_generic_html(source: dict, user_agent: str, fetch_details: bool = True
                 url=href,
                 source=source["name"],
                 tags=source.get("tags", []),
-                description=detail_text[:600],
+                description=detail_text[:14000],
                 mode=inferred["mode"],
                 school_required=inferred["school_required"],
                 ai_policy=inferred["ai_policy"],
@@ -116,7 +143,7 @@ def crawl_generic_html(source: dict, user_agent: str, fetch_details: bool = True
                 authority_score=float(source.get("authority_hint", 60)),
                 info_gap_score=float(source.get("info_gap_hint", 55)),
                 evidence=inferred.get("evidence", []),
-                raw={"source_url": url, "kind": "link"},
+                raw={"source_url": url, "kind": "link", "anchor_text": text, "candidate_text": detail_text[:14000]},
             )
             dates = inferred.get("dates", [])
             if dates:

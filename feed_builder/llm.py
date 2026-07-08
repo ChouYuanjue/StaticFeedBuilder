@@ -9,10 +9,7 @@ from .config import Settings
 
 
 class DeepSeekClient:
-    """Small OpenAI-compatible DeepSeek wrapper.
-
-    This project deliberately keeps LLM calls optional and sparse.
-    """
+    """Small OpenAI-compatible DeepSeek wrapper."""
 
     def __init__(self, settings: Settings):
         self.api_key = settings.deepseek_api_key
@@ -45,19 +42,51 @@ class DeepSeekClient:
         except json.JSONDecodeError:
             return {"raw": content}
 
+    def extract_opportunity(self, title: str, url: str, text: str, current_date: str) -> dict[str, Any]:
+        system = """You are a strict opportunity extraction gate.
+Decide whether a webpage is a CURRENT, actionable, low-friction opportunity suitable for remote participation.
+Use only the provided webpage text. Do not guess.
+
+Reject navigation links, skip links, menus, category/tag pages, login/privacy/contact/sponsor pages, old archives, accepted-results pages, completed/closed/archived items, review guidelines, venue/program pages, and CFP pages whose deadlines are already past.
+
+Accept only currently open or upcoming online/remote challenges, shared tasks, benchmarks, hackathons, CTFs, workshop challenges, competition tracks, or pages with explicit future deadlines.
+
+Return ONLY JSON with this schema:
+{
+  "is_relevant": true/false,
+  "status": "open" | "upcoming" | "closed" | "historical" | "info_page" | "unknown",
+  "title": "clean real title; never use navigation text",
+  "summary": "one short Chinese summary",
+  "mode": "online" | "hybrid" | "onsite" | "unknown",
+  "school_required": "yes" | "no" | "unknown",
+  "affiliation_required": "yes" | "no" | "unknown",
+  "ai_policy": "allowed" | "forbidden" | "unknown",
+  "external_data_policy": "allowed" | "forbidden" | "unknown",
+  "fee": "free" | "low" | "high" | "unknown",
+  "deliverable": "prediction/code/model/report/writeup/demo/unknown",
+  "registration_deadline": "YYYY-MM-DD or null",
+  "submission_deadline": "YYYY-MM-DD or null",
+  "start_at": "YYYY-MM-DD or null",
+  "end_at": "YYYY-MM-DD or null",
+  "authority_adjustment": -20,
+  "info_gap_adjustment": 0,
+  "risk_flags": ["short Chinese risk phrase"],
+  "evidence": ["short exact evidence from the page, max 4 items"]
+}
+
+If all relevant dates are earlier than current_date, set is_relevant=false and status=closed or historical.
+If the page is only an index/listing without a specific current opportunity, set is_relevant=false and status=info_page."""
+        user = f"current_date: {current_date}\nCandidate title: {title}\nURL: {url}\nPage text:\n{text[:14000]}"
+        return self.chat_json(system, user, temperature=0.0)
+
     def clean_competition_text(self, title: str, url: str, text: str) -> dict[str, Any]:
-        system = """你是竞赛情报抽取器。只根据用户给出的页面文本判断，不要猜。
-输出 JSON，字段包括：summary, mode, school_required, ai_policy, fee, deliverable, evidence。
-mode 只能是 online/hybrid/onsite/unknown。
-school_required/ai_policy/fee 不确定时填 unknown。
-evidence 必须是页面原文短句数组。"""
-        user = f"标题：{title}\nURL：{url}\n页面文本：\n{text[:12000]}"
-        return self.chat_json(system, user)
+        from datetime import datetime
+
+        return self.extract_opportunity(title, url, text, datetime.utcnow().date().isoformat())
 
     def make_digest_summary(self, items: list[dict[str, Any]]) -> str:
-        system = """你是中文竞赛机会分析助手。基于 JSON 列表生成简短日程摘要。
-要求：少废话，指出优先级、风险、建议行动。不要编造列表外信息。"""
+        system = """Write a concise Chinese daily summary from the given JSON items.
+Mention priority, risks, and suggested next actions. Do not invent facts."""
         user = json.dumps(items, ensure_ascii=False, default=str)
         data = self.chat_json(system, user, temperature=0.2)
         return str(data.get("summary") or data.get("raw") or "")
-
