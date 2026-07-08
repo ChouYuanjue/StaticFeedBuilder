@@ -144,7 +144,7 @@ def crawl_all(settings: Settings, sources_path: str, prefs_path: str, llm_clean:
     all_comps: list[Competition] = []
     llm = DeepSeekClient(settings)
     cache = LLMCache()
-    remaining_calls = int(llm_prefs.get("max_calls_per_run", 90))
+    remaining_calls = int(llm_prefs.get("max_calls_per_run", 220))
 
     for source in sources:
         name = source.get("name", "unknown")
@@ -179,10 +179,19 @@ def crawl_all(settings: Settings, sources_path: str, prefs_path: str, llm_clean:
         console.print(f"[green]Fetched[/green] {len(comps):3d} from {name}")
         all_comps.extend(comps)
 
-    # Deduplicate in memory by normalized key, keep higher score.
+    # Deduplicate in memory. Prefer title/source dedup because some platforms expose
+    # the same event through several phase/detail URLs. Keep the highest-scoring URL.
+    import re
+
+    def display_key(c: Competition) -> str:
+        title = re.sub(r"\b(round|phase)\s*\d+\b", "", (c.title or "").lower())
+        title = re.sub(r"\b(final|private|public|leaderboard|completed|closed|evaluation[s]?)\b", "", title)
+        title = " ".join(title.replace(":", " ").replace("-", " ").split())
+        return f"{(c.source or '').lower()}|{title}"
+
     best: dict[str, Competition] = {}
     for c in all_comps:
-        k = c.normalized_key()
+        k = display_key(c) or c.normalized_key()
         if k not in best or c.final_score > best[k].final_score:
             best[k] = c
     return sorted(best.values(), key=lambda x: x.final_score, reverse=True)

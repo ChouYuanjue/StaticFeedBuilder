@@ -16,7 +16,7 @@ sources:
     tags: [ai, llm, agents, ai4science, conference]
     authority_hint: 96
     info_gap_hint: 84
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: CVPR Workshops
     enabled: true
@@ -25,7 +25,7 @@ sources:
     tags: [cv, multimodal, workshop, conference]
     authority_hint: 94
     info_gap_hint: 86
-    llm_max_candidates: 14
+    llm_max_candidates: 28
 
   - name: SemEval Tasks
     enabled: true
@@ -34,7 +34,7 @@ sources:
     tags: [nlp, shared_task]
     authority_hint: 88
     info_gap_hint: 82
-    llm_max_candidates: 12
+    llm_max_candidates: 24
 
   - name: TREC Tracks
     enabled: true
@@ -43,7 +43,7 @@ sources:
     tags: [ir, search, rag, shared_task]
     authority_hint: 92
     info_gap_hint: 83
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: BioASQ Challenges
     enabled: true
@@ -52,7 +52,7 @@ sources:
     tags: [biomedical, qa, nlp, shared_task]
     authority_hint: 84
     info_gap_hint: 78
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: Codabench Competitions
     enabled: true
@@ -61,7 +61,7 @@ sources:
     tags: [ai, benchmark, workshop]
     authority_hint: 78
     info_gap_hint: 78
-    llm_max_candidates: 12
+    llm_max_candidates: 24
 
   - name: EvalAI Challenges
     enabled: true
@@ -70,7 +70,7 @@ sources:
     tags: [ai, benchmark]
     authority_hint: 76
     info_gap_hint: 74
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: ML Contests
     enabled: true
@@ -79,7 +79,7 @@ sources:
     tags: [ai, data_science, aggregator]
     authority_hint: 65
     info_gap_hint: 70
-    llm_max_candidates: 12
+    llm_max_candidates: 24
 
   - name: Kaggle Competitions
     enabled: true
@@ -88,7 +88,7 @@ sources:
     tags: [ai, data_science, modeling]
     authority_hint: 82
     info_gap_hint: 35
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: DrivenData Competitions
     enabled: true
@@ -97,7 +97,7 @@ sources:
     tags: [ai, data_science, social_impact]
     authority_hint: 74
     info_gap_hint: 64
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: AIcrowd Challenges
     enabled: true
@@ -106,7 +106,7 @@ sources:
     tags: [ai, rl, agents]
     authority_hint: 72
     info_gap_hint: 63
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: Zindi Competitions
     enabled: true
@@ -115,7 +115,7 @@ sources:
     tags: [ai, data_science]
     authority_hint: 68
     info_gap_hint: 60
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: Devpost AI Hackathons
     enabled: true
@@ -124,7 +124,7 @@ sources:
     tags: [hackathon, ai, product]
     authority_hint: 62
     info_gap_hint: 55
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
 
   # Broader ML / AI conference discovery. LLM gate will reject non-actionable pages.
@@ -135,7 +135,7 @@ sources:
     tags: [ai, ml, conference, workshop]
     authority_hint: 94
     info_gap_hint: 78
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: ICML Calls
     enabled: true
@@ -144,7 +144,7 @@ sources:
     tags: [ai, ml, conference, workshop]
     authority_hint: 94
     info_gap_hint: 78
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: AAAI Calls
     enabled: true
@@ -153,7 +153,7 @@ sources:
     tags: [ai, conference, workshop]
     authority_hint: 86
     info_gap_hint: 70
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: IJCAI Calls
     enabled: true
@@ -162,7 +162,7 @@ sources:
     tags: [ai, conference, workshop]
     authority_hint: 86
     info_gap_hint: 72
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: KDD Calls
     enabled: true
@@ -171,7 +171,7 @@ sources:
     tags: [data_mining, ai, conference, workshop]
     authority_hint: 90
     info_gap_hint: 78
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: SIGIR Calls
     enabled: true
@@ -180,7 +180,7 @@ sources:
     tags: [ir, search, rag, conference, workshop]
     authority_hint: 90
     info_gap_hint: 78
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: TheWebConf Calls
     enabled: true
@@ -189,7 +189,7 @@ sources:
     tags: [web, ai, data_mining, conference, workshop]
     authority_hint: 88
     info_gap_hint: 76
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: WSDM Calls
     enabled: true
@@ -198,7 +198,7 @@ sources:
     tags: [web, search, data_mining, conference]
     authority_hint: 84
     info_gap_hint: 74
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: RecSys Calls
     enabled: true
@@ -207,7 +207,7 @@ sources:
     tags: [recommender_system, ai, conference, challenge]
     authority_hint: 84
     info_gap_hint: 76
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: ACL Calls
     enabled: true
@@ -216,7 +216,7 @@ sources:
     tags: [nlp, conference, shared_task, workshop]
     authority_hint: 90
     info_gap_hint: 80
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: EMNLP Calls
     enabled: true
@@ -225,7 +225,7 @@ sources:
     tags: [nlp, conference, shared_task, workshop]
     authority_hint: 88
     info_gap_hint: 78
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: NAACL Calls
     enabled: true
@@ -234,7 +234,7 @@ sources:
     tags: [nlp, conference, shared_task, workshop]
     authority_hint: 86
     info_gap_hint: 76
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: MICCAI Challenges
     enabled: true
@@ -243,7 +243,7 @@ sources:
     tags: [medical_ai, imaging, conference, challenge]
     authority_hint: 88
     info_gap_hint: 82
-    llm_max_candidates: 12
+    llm_max_candidates: 24
 
   - name: ISBI Challenges
     enabled: true
@@ -252,7 +252,7 @@ sources:
     tags: [medical_ai, imaging, conference, challenge]
     authority_hint: 82
     info_gap_hint: 78
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: ACM Multimedia Calls
     enabled: true
@@ -261,7 +261,7 @@ sources:
     tags: [multimedia, cv, multimodal, conference, challenge]
     authority_hint: 86
     info_gap_hint: 78
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: ECCV Calls
     enabled: true
@@ -270,7 +270,7 @@ sources:
     tags: [cv, conference, workshop, challenge]
     authority_hint: 90
     info_gap_hint: 80
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: ICCV Calls
     enabled: true
@@ -279,7 +279,7 @@ sources:
     tags: [cv, conference, workshop, challenge]
     authority_hint: 90
     info_gap_hint: 80
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: IEEE BigData Calls
     enabled: true
@@ -288,7 +288,7 @@ sources:
     tags: [big_data, data_science, conference, challenge]
     authority_hint: 78
     info_gap_hint: 72
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   - name: ICDM Calls
     enabled: true
@@ -297,7 +297,7 @@ sources:
     tags: [data_mining, ai, conference, challenge]
     authority_hint: 82
     info_gap_hint: 74
-    llm_max_candidates: 8
+    llm_max_candidates: 18
 
   # Additional task/challenge aggregators.
   - name: CodaLab Competitions
@@ -307,7 +307,7 @@ sources:
     tags: [ai, benchmark, challenge]
     authority_hint: 74
     info_gap_hint: 76
-    llm_max_candidates: 10
+    llm_max_candidates: 24
 
   - name: Papers With Code Competitions
     enabled: true
@@ -316,4 +316,149 @@ sources:
     tags: [ai, benchmark, leaderboard]
     authority_hint: 74
     info_gap_hint: 78
-    llm_max_candidates: 12
+    llm_max_candidates: 24
+
+  # Dedicated challenge / leaderboard hubs. These are usually better than raw conference homepages.
+  - name: Grand Challenge Active Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://grand-challenge.org/challenges/
+    tags: [medical_ai, imaging, challenge, benchmark]
+    authority_hint: 82
+    info_gap_hint: 84
+    llm_max_candidates: 30
+
+  - name: Synapse Challenges
+    enabled: true
+    strategy: generic_html
+    url: "https://www.synapse.org/#!Challenges:"
+    tags: [biomedical, data_science, challenge, benchmark]
+    authority_hint: 78
+    info_gap_hint: 80
+    llm_max_candidates: 24
+
+  - name: ChaLearn Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://chalearnlap.cvc.uab.cat/challenge/
+    tags: [cv, multimodal, challenge, benchmark]
+    authority_hint: 74
+    info_gap_hint: 78
+    llm_max_candidates: 24
+
+  - name: Robust Vision Challenge
+    enabled: true
+    strategy: generic_html
+    url: https://www.robustvision.net/
+    tags: [cv, benchmark, challenge]
+    authority_hint: 76
+    info_gap_hint: 78
+    llm_max_candidates: 18
+
+  - name: VOT Challenge
+    enabled: true
+    strategy: generic_html
+    url: https://www.votchallenge.net/
+    tags: [cv, tracking, challenge, benchmark]
+    authority_hint: 76
+    info_gap_hint: 78
+    llm_max_candidates: 18
+
+  - name: MOTChallenge
+    enabled: true
+    strategy: generic_html
+    url: https://motchallenge.net/
+    tags: [cv, tracking, challenge, benchmark]
+    authority_hint: 76
+    info_gap_hint: 78
+    llm_max_candidates: 18
+
+  - name: KDD Cup
+    enabled: true
+    strategy: generic_html
+    url: https://www.kdd.org/kdd-cup
+    tags: [data_mining, recommender_system, ai, challenge]
+    authority_hint: 88
+    info_gap_hint: 82
+    llm_max_candidates: 20
+
+  - name: CLEF Labs
+    enabled: true
+    strategy: generic_html
+    url: https://www.clef-initiative.eu/
+    tags: [ir, nlp, shared_task, benchmark]
+    authority_hint: 82
+    info_gap_hint: 84
+    llm_max_candidates: 22
+
+  - name: ImageCLEF
+    enabled: true
+    strategy: generic_html
+    url: https://www.imageclef.org/
+    tags: [cv, medical_ai, ir, shared_task]
+    authority_hint: 80
+    info_gap_hint: 84
+    llm_max_candidates: 22
+
+  - name: MediaEval Benchmarking Initiative
+    enabled: true
+    strategy: generic_html
+    url: https://multimediaeval.github.io/
+    tags: [multimedia, cv, nlp, shared_task]
+    authority_hint: 78
+    info_gap_hint: 82
+    llm_max_candidates: 20
+
+  - name: FIRE IR Evaluation
+    enabled: true
+    strategy: generic_html
+    url: https://fire.irsi.res.in/
+    tags: [ir, nlp, shared_task, benchmark]
+    authority_hint: 76
+    info_gap_hint: 82
+    llm_max_candidates: 20
+
+  - name: WMT Shared Tasks
+    enabled: true
+    strategy: generic_html
+    url: https://www2.statmt.org/
+    tags: [nlp, machine_translation, shared_task]
+    authority_hint: 84
+    info_gap_hint: 82
+    llm_max_candidates: 18
+
+  - name: AIcrowd Active Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://www.aicrowd.com/challenges?status=active
+    tags: [ai, agents, llm, challenge]
+    authority_hint: 72
+    info_gap_hint: 70
+    llm_max_candidates: 30
+
+  - name: Kaggle Deadline Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.kaggle.com/competitions?sortBy=deadline
+    tags: [ai, data_science, modeling]
+    authority_hint: 82
+    info_gap_hint: 42
+    llm_max_candidates: 24
+
+  - name: DrivenData Active Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://www.drivendata.org/competitions/?status=active
+    tags: [ai, data_science, social_impact]
+    authority_hint: 74
+    info_gap_hint: 70
+    llm_max_candidates: 30
+
+  - name: OpenReview Competition Groups
+    enabled: true
+    strategy: generic_html
+    url: https://openreview.net/group?id=NeurIPS.cc/2026/Competition_Track
+    tags: [ai, conference, competition_track, openreview]
+    authority_hint: 88
+    info_gap_hint: 84
+    llm_max_candidates: 20

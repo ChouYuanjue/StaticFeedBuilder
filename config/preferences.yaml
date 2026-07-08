@@ -35,3 +35,6 @@ preferences:
   max_items_per_digest: 12
   digest_days_ahead: 45
 
+
+llm:
+  max_calls_per_run: 220

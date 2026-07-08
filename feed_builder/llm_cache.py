@@ -25,7 +25,7 @@ class LLMCache:
         return hashlib.sha256(normalized.encode("utf-8", errors="ignore")).hexdigest()
 
     @staticmethod
-    def key(url: str, text: str, schema_version: str = "v2") -> str:
+    def key(url: str, text: str, schema_version: str = "v3") -> str:
         canonical_url = url.split("#")[0].split("?")[0].rstrip("/")
         return f"{schema_version}:{canonical_url}:{LLMCache.text_hash(text)}"
 

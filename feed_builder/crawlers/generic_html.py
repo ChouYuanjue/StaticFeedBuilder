@@ -11,8 +11,10 @@ from ..models import Competition
 from ..text_rules import compact_text, infer_from_text
 
 KEYWORDS = [
-    "competition", "challenge", "contest", "hackathon", "shared task", "benchmark",
-    "leaderboard", "call for competitions", "workshop", "ctf", "赛", "比赛", "挑战", "评测"
+    "competition", "competitions", "challenge", "challenges", "contest", "hackathon",
+    "shared task", "shared-task", "benchmark", "leaderboard", "evaluation",
+    "data challenge", "grand challenge", "call for competitions", "workshop",
+    "task", "track", "ctf", "比赛", "挑战", "评测"
 ]
 NEGATIVE = ["privacy", "terms", "login", "sign in", "contact", "sponsor", "jobs", "career"]
 BAD_ANCHOR_TEXTS = {
@@ -115,8 +117,15 @@ def crawl_generic_html(source: dict, user_agent: str, fetch_details: bool = True
             if href in seen:
                 continue
             if not _same_site_or_allowed(url, href):
-                # Cross-site workshop/challenge links can be useful, but generic crawlers should stay conservative.
-                if "github.com" not in href and "codabench" not in href and "eval.ai" not in href:
+                # Many conference challenge pages live on external workshop sites.
+                # Allow cross-site links only when the anchor/URL still looks challenge-like.
+                cross_blob = f"{text} {href}".lower()
+                allow_external = any(k in cross_blob for k in [
+                    "challenge", "competition", "benchmark", "shared-task", "shared task",
+                    "leaderboard", "codabench", "codalab", "eval.ai", "aicrowd",
+                    "grand-challenge", "synapse", "github.com", "kaggle", "drivendata"
+                ])
+                if not allow_external:
                     continue
             if not _looks_like_candidate(text, href):
                 continue
