@@ -125,3 +125,195 @@ sources:
     authority_hint: 62
     info_gap_hint: 55
     llm_max_candidates: 8
+
+
+  # Broader ML / AI conference discovery. LLM gate will reject non-actionable pages.
+  - name: ICLR Calls
+    enabled: true
+    strategy: generic_html
+    url: https://iclr.cc/
+    tags: [ai, ml, conference, workshop]
+    authority_hint: 94
+    info_gap_hint: 78
+    llm_max_candidates: 8
+
+  - name: ICML Calls
+    enabled: true
+    strategy: generic_html
+    url: https://icml.cc/
+    tags: [ai, ml, conference, workshop]
+    authority_hint: 94
+    info_gap_hint: 78
+    llm_max_candidates: 8
+
+  - name: AAAI Calls
+    enabled: true
+    strategy: generic_html
+    url: https://aaai.org/conference/aaai/aaai-26/
+    tags: [ai, conference, workshop]
+    authority_hint: 86
+    info_gap_hint: 70
+    llm_max_candidates: 8
+
+  - name: IJCAI Calls
+    enabled: true
+    strategy: generic_html
+    url: https://www.ijcai.org/
+    tags: [ai, conference, workshop]
+    authority_hint: 86
+    info_gap_hint: 72
+    llm_max_candidates: 8
+
+  - name: KDD Calls
+    enabled: true
+    strategy: generic_html
+    url: https://kdd.org/kdd2026/
+    tags: [data_mining, ai, conference, workshop]
+    authority_hint: 90
+    info_gap_hint: 78
+    llm_max_candidates: 10
+
+  - name: SIGIR Calls
+    enabled: true
+    strategy: generic_html
+    url: https://sigir.org/sigir2026/
+    tags: [ir, search, rag, conference, workshop]
+    authority_hint: 90
+    info_gap_hint: 78
+    llm_max_candidates: 10
+
+  - name: TheWebConf Calls
+    enabled: true
+    strategy: generic_html
+    url: https://www2026.thewebconf.org/
+    tags: [web, ai, data_mining, conference, workshop]
+    authority_hint: 88
+    info_gap_hint: 76
+    llm_max_candidates: 10
+
+  - name: WSDM Calls
+    enabled: true
+    strategy: generic_html
+    url: https://www.wsdm-conference.org/2026/
+    tags: [web, search, data_mining, conference]
+    authority_hint: 84
+    info_gap_hint: 74
+    llm_max_candidates: 8
+
+  - name: RecSys Calls
+    enabled: true
+    strategy: generic_html
+    url: https://recsys.acm.org/
+    tags: [recommender_system, ai, conference, challenge]
+    authority_hint: 84
+    info_gap_hint: 76
+    llm_max_candidates: 8
+
+  - name: ACL Calls
+    enabled: true
+    strategy: generic_html
+    url: https://2026.aclweb.org/
+    tags: [nlp, conference, shared_task, workshop]
+    authority_hint: 90
+    info_gap_hint: 80
+    llm_max_candidates: 10
+
+  - name: EMNLP Calls
+    enabled: true
+    strategy: generic_html
+    url: https://2026.emnlp.org/
+    tags: [nlp, conference, shared_task, workshop]
+    authority_hint: 88
+    info_gap_hint: 78
+    llm_max_candidates: 10
+
+  - name: NAACL Calls
+    enabled: true
+    strategy: generic_html
+    url: https://2026.naacl.org/
+    tags: [nlp, conference, shared_task, workshop]
+    authority_hint: 86
+    info_gap_hint: 76
+    llm_max_candidates: 8
+
+  - name: MICCAI Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://conferences.miccai.org/2026/en/
+    tags: [medical_ai, imaging, conference, challenge]
+    authority_hint: 88
+    info_gap_hint: 82
+    llm_max_candidates: 12
+
+  - name: ISBI Challenges
+    enabled: true
+    strategy: generic_html
+    url: https://biomedicalimaging.org/2026/
+    tags: [medical_ai, imaging, conference, challenge]
+    authority_hint: 82
+    info_gap_hint: 78
+    llm_max_candidates: 8
+
+  - name: ACM Multimedia Calls
+    enabled: true
+    strategy: generic_html
+    url: https://acmmm.org/2026/
+    tags: [multimedia, cv, multimodal, conference, challenge]
+    authority_hint: 86
+    info_gap_hint: 78
+    llm_max_candidates: 10
+
+  - name: ECCV Calls
+    enabled: true
+    strategy: generic_html
+    url: https://eccv.ecva.net/
+    tags: [cv, conference, workshop, challenge]
+    authority_hint: 90
+    info_gap_hint: 80
+    llm_max_candidates: 8
+
+  - name: ICCV Calls
+    enabled: true
+    strategy: generic_html
+    url: https://iccv.thecvf.com/
+    tags: [cv, conference, workshop, challenge]
+    authority_hint: 90
+    info_gap_hint: 80
+    llm_max_candidates: 8
+
+  - name: IEEE BigData Calls
+    enabled: true
+    strategy: generic_html
+    url: https://bigdataieee.org/
+    tags: [big_data, data_science, conference, challenge]
+    authority_hint: 78
+    info_gap_hint: 72
+    llm_max_candidates: 8
+
+  - name: ICDM Calls
+    enabled: true
+    strategy: generic_html
+    url: https://www.cloud-conf.net/icdm2026/
+    tags: [data_mining, ai, conference, challenge]
+    authority_hint: 82
+    info_gap_hint: 74
+    llm_max_candidates: 8
+
+  # Additional task/challenge aggregators.
+  - name: CodaLab Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://codalab.lisn.upsaclay.fr/competitions/
+    tags: [ai, benchmark, challenge]
+    authority_hint: 74
+    info_gap_hint: 76
+    llm_max_candidates: 10
+
+  - name: Papers With Code Competitions
+    enabled: true
+    strategy: generic_html
+    url: https://paperswithcode.com/competitions
+    tags: [ai, benchmark, leaderboard]
+    authority_hint: 74
+    info_gap_hint: 78
+    llm_max_candidates: 12

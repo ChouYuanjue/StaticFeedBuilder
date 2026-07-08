@@ -98,10 +98,10 @@ def _apply_llm(c: Competition, data: dict[str, Any], now: datetime) -> Competiti
     return c
 
 
-def llm_gate(comps: list[Competition], client: DeepSeekClient, cache: LLMCache, max_calls: int) -> list[Competition]:
+def llm_gate(comps: list[Competition], client: DeepSeekClient, cache: LLMCache, max_calls: int) -> tuple[list[Competition], int, int]:
     if not client.enabled:
         console.print("[yellow]LLM gate requested but API key is missing; skip generic HTML candidates to avoid noisy output.[/yellow]")
-        return []
+        return [], 0, 0
     now = datetime.utcnow()
     today = now.date().isoformat()
     kept: list[Competition] = []
@@ -133,7 +133,7 @@ def llm_gate(comps: list[Competition], client: DeepSeekClient, cache: LLMCache, 
             kept.append(refined)
     cache.save()
     console.print(f"[cyan]LLM gate[/cyan] kept={len(kept)} rejected={rejected} calls={calls} cache_hits={hits} budget_skips={budget_skips}")
-    return kept
+    return kept, calls, hits
 
 
 def crawl_all(settings: Settings, sources_path: str, prefs_path: str, llm_clean: bool = False) -> list[Competition]:
@@ -144,7 +144,7 @@ def crawl_all(settings: Settings, sources_path: str, prefs_path: str, llm_clean:
     all_comps: list[Competition] = []
     llm = DeepSeekClient(settings)
     cache = LLMCache()
-    remaining_calls = int(llm_prefs.get("max_calls_per_run", 45))
+    remaining_calls = int(llm_prefs.get("max_calls_per_run", 90))
 
     for source in sources:
         name = source.get("name", "unknown")
@@ -169,9 +169,9 @@ def crawl_all(settings: Settings, sources_path: str, prefs_path: str, llm_clean:
                 comps = []
                 console.print(f"[yellow]LLM budget exhausted; skip[/yellow] {name}")
             else:
-                comps = llm_gate(comps[:budget], llm, cache, max_calls=budget)
-                remaining_calls -= budget
-            console.print(f"[blue]Filtered[/blue] {before} -> {len(comps)} for {name}")
+                comps, used_calls, _cache_hits = llm_gate(comps[:budget], llm, cache, max_calls=budget)
+                remaining_calls -= used_calls
+            console.print(f"[blue]Filtered[/blue] {before} -> {len(comps)} for {name}; remaining_llm_calls={remaining_calls}")
         elif llm_clean:
             comps = [maybe_llm_clean(c, llm) for c in comps]
 
